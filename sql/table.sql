@@ -72,3 +72,12 @@ create table Zhengh_StudentScore18(
                                       constraint Zhengh_CK_StudentScore_Score18 check(zh_Score>=0)
 
 );
+create table zhengh_class_course18
+(
+    zh_classno18 varchar(10),
+    zh_cno18 varchar(10),
+    constraint zhengh_class_ClassFK18 foreign key (zh_classno18)
+    references zhengh_adclass18(zh_Classno18),
+    constraint zhengh_class_CourseFK18 foreign key(zh_cno18)
+    references zhengh_course18(zh_Cno18)
+);
