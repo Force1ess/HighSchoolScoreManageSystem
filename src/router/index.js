@@ -34,6 +34,26 @@ const routes = [
     path: '/Statistic',
     name:'Statistic',
     component:()=> import('../views/Statistic')
+  },
+  {
+    path:'/DataEntry',
+    name:'DataEntry',
+    component:()=> import('../views/DataEntry')
+  },
+  {
+    path:'/ClassCourseQuery',
+    name:'ClassCourseQuery',
+    component:()=> import('../views/ClassCourseQuery')
+  },
+  {
+    path:'/TeacherCourseQuery',
+    name:'TeacherCourseQuery',
+    component:()=> import('../views/TeacherCourseQuery')
+  },
+  {
+    path:'/StudentCourseQuery',
+    name:'StudentCourseQuery',
+    component:()=> import('../views/StudentCourseQuery')
   }
 ]
 

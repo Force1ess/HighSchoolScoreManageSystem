@@ -1,6 +1,5 @@
 <template>
   <Header/>
-
     <n-space vertical style="margin:2em">
         <n-card title="课程平均成绩查询" size='huge'>
                 <n-grid  :cols="12">
@@ -76,7 +75,7 @@ export default {
   {
       run()
       {
-
+        fetch('http://localhost:3000/list',{mode:'cors'}).then((response)=>{console.log(response.json())})
       }
   }
 }
