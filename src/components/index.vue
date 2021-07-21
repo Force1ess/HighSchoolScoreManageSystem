@@ -20,7 +20,7 @@
         </n-gi>
       </n-grid>
    <n-button type="primary" @click="jump()">
-    <router-link to="/admin" style="text-decoration:none;color:white;">登陆</router-link>
+    <router-link to="/dataentry" style="text-decoration:none;color:white;">登陆</router-link>
      </n-button>
     </n-card>
 </template>

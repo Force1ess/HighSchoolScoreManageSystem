@@ -1,5 +1,6 @@
 <template>
   <n-space vertical>
+    <Header/>
     <n-card title="学生成绩查询">
       <n-space vertical>
         <n-grid x-gap="12" :cols="4">
@@ -25,6 +26,8 @@
 </template>
 
 <script>
+import Header from "../components/Header.vue";
+
 import { h } from "vue";
 import {
   NDataTable,
@@ -61,6 +64,7 @@ export default {
     NGi,
     NCard,
     NStatistic,
+    Header
   },
   data() {
     return {

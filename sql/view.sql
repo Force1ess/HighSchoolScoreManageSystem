@@ -6,11 +6,13 @@ where Sco.zh_Sno18 = S.zh_Sno18
 and Sco.zh_Cno18 = C.zh_Cno18;
 
 #课程平均成绩
-create view Zhengh_CourseAvgScore18(课程编号,平均成绩)
+drop view zhengh_courseavgscore18;
+create view Zhengh_CourseAvgScore18(课程编号,课程名,平均成绩)
 as
-select S.zh_Cno18,avg(s.zh_Score)
-from zhengh_studentscore18 S
-group by  zh_Cno18;
+select S.zh_Cno18,C.zh_Cname18,avg(s.zh_Score)
+from zhengh_studentscore18 S,zhengh_course18 C
+where C.zh_Cno18=S.zh_Cno18
+group by  zh_Cno18
 
 #学生课程学分统计
 create view Zhengh_Course_Statistic18(姓名,学号,学期,课程名,课程编号,学时,考核方式)

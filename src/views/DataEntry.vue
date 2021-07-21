@@ -1,5 +1,7 @@
 <template>
   <n-space vertical>
+    <Header/>
+
     <n-card title="学生成绩录入">
       <n-space vertical>
         <n-grid x-gap="12" :cols="3">
@@ -37,7 +39,7 @@ import {
   NInputNumber,
 } from "naive-ui";
 import CourseSelect from "../components/CourseSelect.vue";
-
+import Header from "../components/Header.vue";
 async function getStudentScore(cid) {
   let f = await fetch(`https://localhost:5001/api/course:${cid}/student:all`);
   let j = await f.json();
@@ -53,6 +55,7 @@ export default {
     NGrid,
     NGi,
     NCard,
+    Header
   },
   data() {
     return {
