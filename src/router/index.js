@@ -51,6 +51,10 @@ const routes = [
     path:'/StudentCourseQuery',
     name:'StudentCourseQuery',
     component:()=> import('../views/StudentCourseQuery')
+  },
+  {
+    path:'/:pathMatch(.*)*',
+    component:()=> import('../views/404')
   }
 ]
 

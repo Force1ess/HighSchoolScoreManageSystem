@@ -4,9 +4,12 @@
 
     <n-card title="学生成绩录入">
       <n-space vertical>
-        <n-grid x-gap="12" :cols="3">
+        <n-grid x-gap="12" :cols="12">
           <n-gi>
-            <course-select v-on:change="selectCourse = $event" />
+            <span style="text-align: center; font-size: 1.5em">课程号</span>
+          </n-gi>
+          <n-gi span="2">
+            <n-input v-model:value="id" placeholder="请输入课程号"></n-input>
           </n-gi>
           <n-gi>
             <n-space>
@@ -20,7 +23,6 @@
           :columns="columns"
           :data="data"
           :pagination="pagination"
-          :loading="inloading"
         />
       </n-space> </n-card
   ></n-space>
@@ -40,12 +42,6 @@ import {
 } from "naive-ui";
 import CourseSelect from "../components/CourseSelect.vue";
 import Header from "../components/Header.vue";
-async function getStudentScore(cid) {
-  let f = await fetch(`https://localhost:5001/api/course:${cid}/student:all`);
-  let j = await f.json();
-  return j;
-}
-
 export default {
   components: {
     NDataTable,
@@ -59,8 +55,6 @@ export default {
   },
   data() {
     return {
-      selectCourse: null,
-      inloading: false,
       columns: [
         {
           title: "学号",

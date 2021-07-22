@@ -1,11 +1,14 @@
 <template>
   <n-space vertical>
-    <Header/>
+    <Header />
     <n-card title="班级排课查询">
       <n-space vertical>
-        <n-grid x-gap="12" :cols="3">
+        <n-grid x-gap="12" :cols="12">
           <n-gi>
-            <class-select v-on:change="selectClass = $event" />
+            <span style="text-align: center; font-size: 1.5em">班级号</span>
+          </n-gi>
+          <n-gi span="2">
+            <n-input v-model:value="id" placeholder="请输入班级号"></n-input>
           </n-gi>
           <n-gi>
             <n-button @click="query">查询</n-button>
@@ -16,7 +19,6 @@
           :columns="columns"
           :data="data"
           :pagination="pagination"
-          :loading="inloading"
         />
       </n-space> </n-card
   ></n-space>
@@ -35,15 +37,9 @@ import {
   NGi,
   NCard,
   useMessage,
+  NInput,
 } from "naive-ui";
 import ClassSelect from "../components/ClassSelect.vue";
-
-async function getClassCourse(cl) {
-  let res = await fetch(`https://localhost:5001/api/class:${cl}/course:all`);
-  let j = await res.json();
-  return j;
-}
-
 export default {
   components: {
     NDataTable,
@@ -53,92 +49,51 @@ export default {
     NGrid,
     NGi,
     NCard,
-    Header
+    Header,
+    NInput,
   },
   data() {
     return {
-      selectClass: null,
-      inloading: false,
+      id: "",
       columns: [
         {
           title: "课程编号",
-          key: "id",
+          key: "zh_Cno18",
         },
         {
           title: "课程名",
-          key: "name",
-        },
-        {
-          title: "任课教师",
-          key: "teacher",
-          render(row) {
-            const tags = row.teacher.map((tagKey) => {
-              return h(
-                NText,
-                {
-                  style: {
-                    marginRight: "6px",
-                  },
-                },
-                {
-                  default: () => tagKey,
-                }
-              );
-            });
-            return tags;
-          },
-        },
-        {
-          title: "开设学期",
-          key: "semester",
+          key: "zh_Cname18",
         },
         {
           title: "学时",
-          key: "hours",
-        },
-        {
-          title: "学分",
-          key: "credit",
+          key: "zh_Hours18",
         },
         {
           title: "考试或考查",
-          key: "examMethod",
+          key: "zh_Way18",
         },
       ],
+      allData: [],
       data: [],
       pagination: {
         pageSize: 10,
       },
     };
   },
-  setup() {
-    const msg = useMessage();
-    return {
-      warn(m) {
-        msg.warning(m);
-      },
-      error(m) {
-        msg.error(m);
-      },
-    };
-  },
   methods: {
     async query() {
-      if (this.selectClass === null) {
-        this.warn("请先选择班级");
-      } else {
-        this.inloading = true;
-        getClassCourse(this.selectClass)
-          .then((d) => {
-            this.data = d;
-            this.inloading = false;
-          })
-          .catch(() => {
-            this.error("获取数据失败");
-            this.inloading = false;
-          });
+      this.data = [];
+      for (let i = 0; i < this.allData.length; i++) {
+        if(this.allData[i].zh_Classno18==this.id)
+        {
+          this.data.push(this.allData[i])
+        }
       }
-    },
+    }
   },
+    async mounted() {
+      let f = await fetch("http://localhost:3000/classcourse");
+      this.allData = await f.json();
+    },
 };
 </script>

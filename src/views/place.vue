@@ -27,7 +27,7 @@ const createColumns = () => {
 };
 const getdata = async () => {
   let table;
-  let f = await fetch("http://localhost:3000/place", { mode: "cors" }); //.then((response)=>{return response.json()}).then((json)=>{return json}).then((f)=>{table=f})
+  let f = await fetch("http://localhost:3000/place", { mode: "cors" }); 
   table = await f.json();
   let d = [];
   for (let i = 0; i < table.length; i++) {

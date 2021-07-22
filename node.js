@@ -16,8 +16,8 @@ const pool = mysql.createPool({
 // response
 app.use(
   cors({
-    origin: function (ctx) { //设置允许来自指定域名请求
-      return '*'; //只允许http://localhost:8080这个域名的请求
+    origin: function (ctx) {
+      return '*'
     },
     maxAge: 5, //指定本次预检请求的有效期，单位为秒。
     credentials: true, //是否允许发送Cookie
@@ -26,26 +26,46 @@ app.use(
     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'] //设置获取其他自定义字段
   })
 )
-router.get('/major', async (ctx)=>{
+router.get('/major', async (ctx) => {
   ctx.response.type = 'text/plain';
-  [ctx.body,fields] = await pool.query('select * from Zhengh_major18')
+  [ctx.body, fields] = await pool.query('select * from Zhengh_major18')
 })
 router.get('/statistic', async (ctx) => {
   ctx.response.type = 'text/plain';
-  [ctx.body,fields] = await pool.query('select * from zhengh_course_statistic18')
+  [ctx.body, fields] = await pool.query('select * from zhengh_course_statistic18')
 })
-router.get('/Courselist', async (ctx) => {
+router.get('/ScoreStatisticPerYear', async (ctx) => {
   ctx.response.type = 'text/plain';
-  pool.query()
+  [ctx.body, fields] = await pool.query('select 姓名,学号,课程编号 课程号,课程名,成绩 ,学期 from zhengh_scoresview18')
+})
+router.get('/teachercourse', async (ctx) => {
+  ctx.response.type = 'text/plain';
+  [ctx.body, fields] = await pool.query('select zh_Tno18 tno,zh_Cno18 id,zh_Cname18 name,zh_Tname18 teacher,zh_Hours18 hours,zh_Credit18 credit,zh_Classname18 classname from zhengh_teachercourse18')
 })
 router.get('/place', async (ctx) => {
   ctx.response.type = 'text/plain';
-  [ctx.body,fields] = await pool.query('select * from zhengh_studentsource18;')
+  [ctx.body, fields] = await pool.query('select * from zhengh_studentsource18;')
   console.log(ctx.body)
 })
 router.get('/courseAvgScore', async (ctx) => {
   ctx.response.type = 'text/plain';
-  [ctx.body,fields] = await pool.query('select * from Zhengh_courseavgscore18')
+  [ctx.body, fields] = await pool.query('select * from Zhengh_courseavgscore18')
+})
+router.get('/scorerank', async (ctx) => {
+  ctx.response.type = 'text/plain';
+  [ctx.body, fields] = await pool.query('select zh_Sno18 id,zh_Sname18 name,zh_Classname18 classname,s.`sum(c.zh_Score)/sum(s.zh_Credit18)` gpa from zhengh_averagegpa18 s ORDER BY `sum(c.zh_Score)/sum(s.zh_Credit18)` DESC')
+})
+router.get('/classcourse', async (ctx) => {
+  ctx.response.type = 'text/plain';
+  [ctx.body, fields]=await pool.query('SELECT t.* FROM main.zhengh_classcourse18 t')
+
+})
+router.get('/studentcourse',async (ctx)=> {
+  ctx.response.type = 'text/plain';
+  [ctx.body, fields]=await pool.query('select  zh_Sno18 sid,zh_Cno18 id,zh_Cname18 name,zh_Term18 semester,zh_Score score,zh_credit18 from zhengh_coursegpa18')
+})
+router.get('/update',async (ctx) => {
+  
 })
 app.use(router.routes()).use(router.allowedMethods())
 app.listen(3000);

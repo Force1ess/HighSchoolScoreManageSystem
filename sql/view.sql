@@ -23,13 +23,30 @@ where Sco.zh_Sno18=S.zh_Sno18
 and Sco.zh_Cno18= C.zh_Cno18;
 
 #教师任课情况查询视图
-create view Zhengh_TeacherCourse18(教师编号,教师姓名,课程编号,课程名,班级编号,班级名,学时,学分)
-as
-select T.zh_Tno18,T.zh_Tname18,c.zh_Cno18,c.zh_Cname18,class.zh_Classno18,c.zh_Cname18,c.zh_Hours18,c.zh_Credit18
-from zhengh_teacher18 T,zhengh_course18 C,zhengh_teachingclass18 teach,zhengh_adclass18 class
-where
-teach.zh_Cno18=C.zh_Cno18
-and teach.zh_Tno18 = t.zh_Tno18;
+create definer = root@localhost view zhengh_teachercourse18 as
+select `t`.`zh_Tno18`         AS `zh_Tno18`,
+       `t`.`zh_Tname18`       AS `zh_Tname18`,
+       `c`.`zh_Cno18`         AS `zh_Cno18`,
+       `c`.`zh_Cname18`       AS `zh_Cname18`,
+       `class`.`zh_Classno18` AS `zh_Classno18`,
+       `class`.`zh_Classname18`       AS `zh_Classname18`,
+       `c`.`zh_Hours18`       AS `zh_Hours18`,
+       `c`.`zh_Credit18`      AS `zh_Credit18`
+from `main`.`zhengh_teacher18` `t`
+         join `main`.`zhengh_course18` `c`
+         join `main`.`zhengh_teachingclass18` `teach`
+         join `main`.`zhengh_adclass18` `class`
+where ((`teach`.`zh_Cno18` = `c`.`zh_Cno18`) and (`teach`.`zh_Tno18` = `t`.`zh_Tno18`))
+and class.zh_Classno18 = teach.zh_Classno18;
+
+
+-- create view Zhengh_TeacherCourse18(教师编号,教师姓名,课程编号,课程名,班级编号,班级名,学时,学分)
+-- as
+-- select T.zh_Tno18,T.zh_Tname18,c.zh_Cno18,c.zh_Cname18,class.zh_Classno18,c.zh_Cname18,c.zh_Hours18,c.zh_Credit18
+-- from zhengh_teacher18 T,zhengh_course18 C,zhengh_teachingclass18 teach,zhengh_adclass18 class
+-- where
+-- teach.zh_Cno18=C.zh_Cno18
+-- and teach.zh_Tno18 = t.zh_Tno18;
 
 #班级开课查询视图
 create view Zhengh_ClassCourse18
@@ -46,21 +63,41 @@ from zhengh_student18
 group by zh_Adr18;
 
 #
-create view Zhengh_CourseGPA18
-as
-select s.zh_Sno18,s.zh_Sname18,c.zh_Term18,c.zh_Cno18,c.zh_Cname18,ss.zh_Score
-from zhengh_student18 S,zhengh_course18 C,zhengh_studentscore18 SS
-where ss.zh_Cno18= c.zh_Cno18
-and ss.zh_Sno18=s.zh_Sno18;
+create definer = root@localhost view zhengh_coursegpa18 as
+select `s`.`zh_Sno18`   AS `zh_Sno18`,
+       `s`.`zh_Sname18` AS `zh_Sname18`,
+       `c`.`zh_Term18`  AS `zh_Term18`,
+       `c`.`zh_Cno18`   AS `zh_Cno18`,
+       `c`.`zh_Cname18` AS `zh_Cname18`,
+       `ss`.`zh_Score`  AS `zh_Score`,
+       c.zh_Credit18
+from `main`.`zhengh_student18` `s`
+         join `main`.`zhengh_course18` `c`
+         join `main`.`zhengh_studentscore18` `ss`
+where ((`ss`.`zh_Cno18` = `c`.`zh_Cno18`) and (`ss`.`zh_Sno18` = `s`.`zh_Sno18`));
+
 
 #均绩
 drop view zhengh_averageGpa18
-create view zhengh_averageGpa18
-(学号,学期,均绩)
-as select c.zh_Sno18,c.zh_Term18,sum(c.zh_Score)/(s.zh_Credit18)
-from zhengh_course18 s,Zhengh_CourseGPA18 c
-where c.zh_Cno18=s.zh_Cno18
-and c.zh_Score group by c.zh_Term18,c.zh_Sno18;
+-- create view zhengh_averageGpa18
+-- (学号,学期,均绩)
+-- as select c.zh_Sno18,c.zh_Term18,sum(c.zh_Score)/(s.zh_Credit18)
+-- from zhengh_course18 s,Zhengh_CourseGPA18 c
+-- where c.zh_Cno18=s.zh_Cno18
+-- and c.zh_Score group by c.zh_Term18,c.zh_Sno18;
+create definer = root@localhost view zhengh_averagegpa18 as
+select `main`.`c`.`zh_Sno18`                                 AS `zh_Sno18`,
+       `main`.`c`.`zh_Sname18`                               AS `zh_Sname18`,
+       `ad`.`zh_Classname18`                                 AS `zh_Classname18`,
+       (sum(`main`.`c`.`zh_Score`) / sum(`s`.`zh_Credit18`)) AS `sum(c.zh_Score)/sum(s.zh_Credit18)`
+from (((`main`.`zhengh_course18` `s` join `main`.`zhengh_coursegpa18` `c`) join `main`.`zhengh_student18` `z`)
+         join `main`.`zhengh_adclass18` `ad`)
+where ((`main`.`c`.`zh_Cno18` = `s`.`zh_Cno18`) and (0 <> `main`.`c`.`zh_Score`) and
+       (`main`.`c`.`zh_Sno18` = `z`.`zh_Sno18`) and (`ad`.`zh_Classno18` = `z`.`zh_Classno18`))
+group by `main`.`c`.`zh_Sno18`;
+
+
+
 
 create view Zhengh_admin_Student18
 as select s.zh_Sno18,s.zh_Sname18,s.zh_Ssex18,s.zh_Sage18,m.zh_Mno18,a.zh_Classname18,s.zh_Adr18,学期,均绩

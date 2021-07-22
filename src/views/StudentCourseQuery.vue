@@ -3,14 +3,20 @@
     <Header/>
     <n-card title="学生成绩查询">
       <n-space vertical>
-        <n-grid x-gap="12" :cols="4">
+        <n-grid x-gap="12" :cols="8">
+          <n-gi>
+          <span style="text-align: center; font-size: 1.5em">学号</span>
+          </n-gi>
           <n-gi :span="2">
-            <student-select v-on:change="selectStudent = $event" />
+            <n-input
+            v-model:value="id"
+            placeholder="请输入学号"
+            ></n-input>
           </n-gi>
           <n-gi>
             <n-button @click="query">查询</n-button>
           </n-gi>
-          <n-gi>
+          <n-gi offset='2'>
             <n-statistic label="已修学分" :value="credit"></n-statistic>
           </n-gi>
         </n-grid>
@@ -19,7 +25,6 @@
           :columns="columns"
           :data="data"
           :pagination="pagination"
-          :loading="inloading"
         />
       </n-space> </n-card
   ></n-space>
@@ -39,21 +44,9 @@ import {
   NCard,
   NStatistic,
   useMessage,
+  NInput
 } from "naive-ui";
 import StudentSelect from "../components/StudentSelect.vue";
-
-async function getStudentCourse(sid) {
-  let res = await fetch(`https://localhost:5001/api/student:${sid}/course:all`);
-  let j = await res.json();
-  return j;
-}
-
-async function getStudentCredit(sid) {
-  let res = await fetch(`https://localhost:5001/api/student:${sid}/credit`);
-  let j = await res.text();
-  return j;
-}
-
 export default {
   components: {
     NDataTable,
@@ -64,115 +57,60 @@ export default {
     NGi,
     NCard,
     NStatistic,
-    Header
+    Header,
+    NInput
   },
   data() {
     return {
-      selectStudent: null,
-      inloading: false,
+      id:'',
       columns: [
         {
           title: "课程编号",
           key: "id",
-          sorter: "default",
         },
         {
           title: "课程名",
           key: "name",
         },
         {
-          title: "任课教师",
-          key: "teacher",
-          render(row) {
-            const tags = row.teacher.map((tagKey) => {
-              return h(
-                NText,
-                {
-                  style: {
-                    marginRight: "6px",
-                  },
-                },
-                {
-                  default: () => tagKey,
-                }
-              );
-            });
-            return tags;
-          },
-        },
-        {
           title: "开设学期",
           key: "semester",
-          filterOptions: [
-            {
-              label: "2020",
-              value: "2020",
-            },
-            {
-              label: "2021",
-              value: "2021",
-            },
-          ],
-          filter(value, row) {
-            return ~row.semester.indexOf(value);
-          },
-        },
-        {
-          title: "学时",
-          key: "hours",
-          sorter: "default",
-        },
-        {
-          title: "学分",
-          key: "credit",
-          sorter: "default",
-        },
-        {
-          title: "考试或考查",
-          key: "examMethod",
         },
         {
           title: "成绩",
           key: "score",
-          sorter: "default",
         },
+        
       ],
+      allData:[],
       data: [],
       pagination: {
         pageSize: 10,
       },
-      credit: 0,
-    };
-  },
-  setup() {
-    const msg = useMessage();
-    return {
-      warn(m) {
-        msg.warning(m);
-      },
-      errot(m) {
-        msg.error(m);
-      },
+    credit:0
     };
   },
   methods: {
     async query() {
-      if (this.selectStudent === null) {
-        this.warn("请先选择学生");
-      } else {
-        this.inloading = true;
-        this.credit = await getStudentCredit(this.selectStudent);
-        getStudentCourse(this.selectStudent)
-          .then((d) => {
-            this.data = d;
-            this.inloading = false;
-          })
-          .catch(() => {
-            this.errot("获取数据失败");
-            this.inloading = false;
-          });
+      this.credit=0;
+      this.data=[];
+      for(let i = 0; i < this.allData.length; i++)
+      {
+        if(this.allData[i].sid==this.id)
+        {
+          this.data.push(this.allData[i])
+          this.credit+=Number(this.allData[i].zh_Credit18)
+          console.log(this.allData[i].zh_Credit18)
+
+        }
       }
+
     },
   },
+  async mounted() {
+    let f = await fetch('http://localhost:3000/studentcourse');
+    this.allData = await f.json();
+    console.log(this.allData)
+  }
 };
 </script>
