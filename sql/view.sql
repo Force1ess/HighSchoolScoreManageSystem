@@ -1,3 +1,12 @@
+create view Zhengh_rateScore18
+as
+select distinct s.zh_Sno18,s.zh_Sname18,C.zh_Cno18,T.zh_Tno18,sc.zh_Score
+from zhengh_studentscore18 Sc,zhengh_student18 S,zhengh_course18 C,zhengh_teachingclass18 T,zhengh_class_course18 cc
+where s.zh_Sno18 = sc.zh_Sno18
+and sc.zh_Cno18 = c.zh_Cno18
+and t.zh_Cno18 = C.zh_Cno18
+and s.zh_Classno18 = t.zh_Classno18
+
 #成绩视图
 create view Zhengh_ScoresView18(姓名,学号,课程编号,课程名,成绩,学期)
 as select s.zh_Sname18,s.zh_Sno18,C.zh_Cno18,C.zh_Cname18,Sco.zh_Score,C.zh_Term18

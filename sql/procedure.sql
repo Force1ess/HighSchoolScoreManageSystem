@@ -1,14 +1,3 @@
-create procedure Zhengh_InsertCourses(
-in zh_Cno18 char(10),
-in zh_Cname18 char(10),
-in zh_Term18 char(20),
-in zh_Hours int,
-in zh_way char(10),
-in zh_credit int)
-begin
-insert zhengh_course18 values
-    (zh_Cno18,zh_Cname18,zh_Term18,zh_Hours18,zh_Credit18,zh_Way18);
-end
 call Zhengh_updateCredit18('01');
 create procedure Zhengh_updateCredit18(in zh_sno char(10))
 begin

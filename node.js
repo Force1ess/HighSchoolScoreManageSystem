@@ -4,6 +4,8 @@ const cors = require('koa2-cors');
 const Router = require('koa-router');
 const router = new Router();
 const mysql = require('mysql2/promise');
+const bodyParser = require('koa-bodyparser');
+app.use(bodyParser());
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
@@ -57,15 +59,24 @@ router.get('/scorerank', async (ctx) => {
 })
 router.get('/classcourse', async (ctx) => {
   ctx.response.type = 'text/plain';
-  [ctx.body, fields]=await pool.query('SELECT t.* FROM main.zhengh_classcourse18 t')
+  [ctx.body, fields] = await pool.query('SELECT t.* FROM main.zhengh_classcourse18 t')
 
 })
-router.get('/studentcourse',async (ctx)=> {
+router.get('/studentcourse', async (ctx) => {
   ctx.response.type = 'text/plain';
-  [ctx.body, fields]=await pool.query('select  zh_Sno18 sid,zh_Cno18 id,zh_Cname18 name,zh_Term18 semester,zh_Score score,zh_credit18 from zhengh_coursegpa18')
+  [ctx.body, fields] = await pool.query('select  zh_Sno18 sid,zh_Cno18 id,zh_Cname18 name,zh_Term18 semester,zh_Score score,zh_credit18 from zhengh_coursegpa18')
 })
-router.get('/update',async (ctx) => {
+router.post('/update', async (ctx) => {
+  let data = ctx.request.body;
+  for (let i = 0; i < data.length;i++) {
+    await pool.execute(`update zhengh_studentscore18 set zh_Score = ${data[i].zh_Score} where zh_Sno18 ='${data[i].zh_Sno18}' and zh_Cno18='${data[i].zh_Cno18}'`);
+    await pool.execute(`call Zhengh_updateCredit18('${data[i].zh_Sno18}')`)
+  }
   
+})
+router.get('/score', async (ctx) => {
+  ctx.response.type = 'text/plain';
+  [ctx.body, fields] = await pool.query('SELECT t.* FROM main.zhengh_ratescore18 t')
 })
 app.use(router.routes()).use(router.allowedMethods())
 app.listen(3000);
