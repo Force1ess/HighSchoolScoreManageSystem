@@ -1,5 +1,7 @@
-# point_sys
-
+# Point_sys
+- Vue3
+- Naive-UI
+- Koa
 ## Project setup
 ```
 npm install
