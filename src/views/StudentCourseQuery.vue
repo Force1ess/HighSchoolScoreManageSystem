@@ -99,12 +99,20 @@ export default {
         if(this.allData[i].sid==this.id)
         {
           this.data.push(this.allData[i])
-          this.credit+=Number(this.allData[i].zh_Credit18)
           console.log(this.allData[i].zh_Credit18)
 
         }
       }
-
+      let mid = await fetch('http://localhost:3000/credit');
+      mid = await mid.json();
+      console.log(mid)
+      for(let i = 0; i <mid.length; i++)
+      {
+        if(mid[i].sno==this.id)
+        {
+          this.credit=mid[i].credit;
+        }
+      }
     },
   },
   async mounted() {

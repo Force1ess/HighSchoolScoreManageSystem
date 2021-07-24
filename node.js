@@ -47,7 +47,6 @@ router.get('/teachercourse', async (ctx) => {
 router.get('/place', async (ctx) => {
   ctx.response.type = 'text/plain';
   [ctx.body, fields] = await pool.query('select * from zhengh_studentsource18;')
-  console.log(ctx.body)
 })
 router.get('/courseAvgScore', async (ctx) => {
   ctx.response.type = 'text/plain';
@@ -73,6 +72,10 @@ router.post('/update', async (ctx) => {
     await pool.execute(`call Zhengh_updateCredit18('${data[i].zh_Sno18}')`)
   }
   
+})
+router.get('/credit',async (ctx)=>{
+  ctx.response.type = 'text/plain';
+  [ctx.body, fields] = await pool.query('select zh_Sno18 sno,zh_Scredits18 credit from zhengh_student18')
 })
 router.get('/score', async (ctx) => {
   ctx.response.type = 'text/plain';
